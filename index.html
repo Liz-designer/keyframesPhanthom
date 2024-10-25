@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phantom Spooky</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/stylos.css">
+  </head>
+  <body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4" style="width: 100%;">
+                <h1 class="text-white text-center">Phantom Spooky</h1>
+            </div>
+        </div>
+
+        <!-- Score and Timer -->
+        <div class="row">
+            <div class="col-6">
+                <h3 class="text-white">Puntos: <span id="score">0</span></h3>
+            </div>
+            <div class="col-6 text-end">
+                <h3 class="text-white">Tiempo: <span id="timer">60</span>s</h3>
+            </div>
+        </div>
+
+        <!-- Game Area with Phantom, Obstacles and Collectibles -->
+        <div class="row">
+            <div class="col-12 fondoGame">
+                <img src="images/Phantom.png" alt="Fantasma Boo" height="100px" class="phantomMover" id="phantom">
+                <img src="images/dulce2-removebg-preview.png" alt="Coleccionable" class="collectible" id="collectible1" style="position: absolute; top: 80%; left: 55%;" height="100px">
+                <img src="images/dulce2-removebg-preview.png" alt="Coleccionable" class="collectible" id="collectible1" style="position: absolute; top: 60%; left: 25%;" height="100px">
+                <img src="images/dulce2-removebg-preview.png" alt="Coleccionable" class="collectible" id="collectible1" style="position: absolute; top: 40%; left: 40%;" height="100px">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4"></div>
+            <div class="col-4"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <script>
+        const phantom = document.getElementById('phantom');
+        let topPos = 200;
+        let leftPos = 200;
+        const step = 10;
+        let score = 0;
+        let timeLeft = 60;
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const collectible = document.getElementById('collectible1');
+        const obstacle = document.getElementById('obstacle1');
+        
+        // Temporizador
+        const countdown = setInterval(function() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+            } else {
+                clearInterval(countdown);
+                alert('¡Se acabó el tiempo! Puntuación final: ' + score);
+            }
+        }, 1000);
+
+        // Mover el Fantasma
+        function movePhantom() {
+            phantom.style.top = topPos + 'px';
+            phantom.style.left = leftPos + 'px';
+        }
+
+        // Detección de colisiones
+        function checkCollision(element1, element2) {
+            const rect1 = element1.getBoundingClientRect();
+            const rect2 = element2.getBoundingClientRect();
+            return !(rect1.right < rect2.left || 
+                     rect1.left > rect2.right || 
+                     rect1.bottom < rect2.top || 
+                     rect1.top > rect2.bottom);
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                leftPos = Math.max(0, leftPos - step);
+            } else if (event.key === 'ArrowRight') {
+                leftPos = Math.min(window.innerWidth - 150, leftPos + step);
+            } else if (event.key === 'ArrowUp') {
+                topPos = Math.max(0, topPos - step);
+            } else if (event.key === 'ArrowDown') {
+                topPos = Math.min(window.innerHeight - 150, topPos + step);
+            }
+            movePhantom();
+
+            // Colisión con coleccionable
+            if (checkCollision(phantom, collectible)) {
+                score += 10;
+                scoreElement.textContent = score;
+                collectible.style.display = 'none';  // Desaparece el coleccionable
+            }
+
+    
+        });
+    </script>
+  </body>
+</html>
